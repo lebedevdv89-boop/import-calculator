@@ -1,205 +1,428 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Калькулятор импорта (в белую)</title>
-<style>
-body{font-family:Arial,Helvetica,sans-serif;background:#f5f6f8;margin:0;padding:20px}
-.container{max-width:1100px;margin:0 auto}
-.card{background:#fff;padding:20px;border-radius:14px;margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,0.06)}
-h1{margin-bottom:30px}
-h2{margin-top:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-.row{display:grid;grid-template-columns:1fr 110px;gap:10px}
-input,select{padding:10px;border-radius:8px;border:1px solid #ccc;width:100%}
-.big{font-size:28px;font-weight:700}
-.result-box{background:#111;color:#fff;padding:20px;border-radius:14px}
-label{font-size:13px;color:#444}
-.switch{display:flex;gap:15px;margin-bottom:10px}
-@media(max-width:768px){
-.grid{grid-template-columns:1fr}
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Калькулятор импорта (в белую)</title>
+  <style>
+    :root{--bg:#f5f6f8;--card:#fff;--bd:#e6e6e6;--txt:#111;--muted:#666}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--txt)}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    h1{margin:8px 0 16px;font-size:24px}
+    .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+    h2{margin:0 0 12px;font-size:16px}
+    label{display:block;font-size:12px;color:#444;margin:0 0 6px}
+    input,select{width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:10px;font-size:14px;outline:none}
+    input:focus,select:focus{border-color:#999}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .row{display:grid;grid-template-columns:1fr 120px;gap:8px}
+    .full{grid-column:1/-1}
+    .hint{font-size:12px;color:var(--muted);line-height:1.35;margin-top:6px}
+    .switch{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 10px}
+    .switch label{display:flex;gap:8px;align-items:center;margin:0}
+    .totals{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+    .big{border:2px solid #111;border-radius:14px;padding:16px;background:#fafafa}
+    .big .t{font-size:12px;color:#333;margin-bottom:8px}
+    .big .v{font-size:28px;font-weight:700}
+    .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .kpi{border:1px solid var(--bd);border-radius:12px;padding:12px}
+    .kpi .t{font-size:12px;color:#444}
+    .kpi .v{font-size:16px;font-weight:700;margin-top:6px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    button{border:1px solid #111;background:#111;color:#fff;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px}
+    button.secondary{background:#fff;color:#111}
+    @media(max-width:780px){
+      .grid,.grid3,.totals{grid-template-columns:1fr}
+      .kpis{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-<h1>Калькулятор импорта (официальная схема)</h1>
+  <div class="wrap">
+    <h1>Калькулятор импорта (официальная схема “в белую”)</h1>
 
-<div class="card">
-<h2>Курсы валют</h2>
-<div class="grid">
-<div><label>CNY → RUB</label><input id="rateCNY" value="12.5"></div>
-<div><label>USD → RUB</label><input id="rateUSD" value="95"></div>
-</div>
-</div>
+    <!-- Курсы -->
+    <div class="card">
+      <h2>Курсы валют</h2>
+      <div class="grid3">
+        <div>
+          <label>CNY → RUB</label>
+          <input id="rateCNY" value="12.50" inputmode="decimal" />
+          <div class="hint">Поменяй на актуальный курс.</div>
+        </div>
+        <div>
+          <label>USD → RUB</label>
+          <input id="rateUSD" value="95.00" inputmode="decimal" />
+          <div class="hint">Поменяй на актуальный курс.</div>
+        </div>
+        <div>
+          <label>Валюта расчёта</label>
+          <input value="RUB" disabled />
+          <div class="hint">Все итоги в рублях.</div>
+        </div>
+      </div>
+    </div>
 
-<div class="card">
-<h2>Товар</h2>
-<div class="grid">
-<div>
-<label>Цена 1 шт</label>
-<div class="row">
-<input id="price">
-<select id="priceCur">
-<option value="CNY">CNY</option>
-<option value="USD">USD</option>
-<option value="RUB">RUB</option>
-</select>
-</div>
-</div>
+    <!-- Товар -->
+    <div class="card">
+      <h2>Товар</h2>
+      <div class="grid">
+        <div class="full">
+          <label>Наименование груза</label>
+          <input id="cargoName" placeholder="Например: режущие пластины / обувь / электроника" />
+        </div>
 
-<div><label>Количество</label><input id="qty" value="1"></div>
-<div><label>Вес 1 шт (кг)</label><input id="weight"></div>
-<div><label>Итого закупка</label><input id="buyOut" disabled></div>
-</div>
-</div>
+        <div>
+          <label>Стоимость 1 шт</label>
+          <div class="row">
+            <input id="unitPrice" value="0" inputmode="decimal" />
+            <select id="unitPriceCur">
+              <option value="CNY">CNY</option>
+              <option value="USD">USD</option>
+              <option value="RUB">RUB</option>
+            </select>
+          </div>
+        </div>
 
-<div class="card">
-<h2>Логистика</h2>
-<div class="grid">
-<div>
-<label>До границы</label>
-<div class="row">
-<input id="border">
-<select id="borderCur">
-<option value="RUB">RUB</option>
-<option value="CNY">CNY</option>
-<option value="USD">USD</option>
-</select>
-</div>
-</div>
+        <div>
+          <label>Количество, шт</label>
+          <input id="qty" value="1" inputmode="numeric" />
+        </div>
 
-<div>
-<label>По РФ</label>
-<div class="row">
-<input id="rf">
-<select id="rfCur">
-<option value="RUB">RUB</option>
-<option value="CNY">CNY</option>
-<option value="USD">USD</option>
-</select>
-</div>
-</div>
-</div>
-</div>
+        <div>
+          <label>Вес 1 шт, кг</label>
+          <input id="unitWeight" value="0" inputmode="decimal" />
+        </div>
 
-<div class="card">
-<h2>Таможня</h2>
+        <div>
+          <label>Итого стоимость закупки (авто)</label>
+          <input id="buyTotalOut" disabled />
+        </div>
 
-<label>Пошлина (%)</label>
-<input id="duty" value="0">
+        <div>
+          <label>Итого вес, кг (авто)</label>
+          <input id="weightTotalOut" disabled />
+        </div>
+      </div>
+    </div>
 
-<label>Антидемпинг (%)</label>
-<input id="anti" value="0">
+    <!-- Логистика -->
+    <div class="card">
+      <h2>Логистика</h2>
+      <div class="grid">
+        <div>
+          <label>Логистика до границы / до места ввоза (влияет на таможенную стоимость)</label>
+          <div class="row">
+            <input id="logBorder" value="0" inputmode="decimal" />
+            <select id="logBorderCur">
+              <option value="RUB">RUB</option>
+              <option value="CNY">CNY</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
 
-<h3>НДС</h3>
-<div class="switch">
-<label><input type="radio" name="vatMode" value="percent" checked> В процентах</label>
-<label><input type="radio" name="vatMode" value="manual"> Фиксированная сумма</label>
-</div>
+        <div>
+          <label>Страховка до границы (если есть)</label>
+          <div class="row">
+            <input id="insurance" value="0" inputmode="decimal" />
+            <select id="insuranceCur">
+              <option value="RUB">RUB</option>
+              <option value="CNY">CNY</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
 
-<div id="vatPercent">
-<label>НДС %</label>
-<input id="vatPct" value="20">
-</div>
+        <div>
+          <label>Довоз по РФ (после таможни)</label>
+          <div class="row">
+            <input id="logRF" value="0" inputmode="decimal" />
+            <select id="logRFCur">
+              <option value="RUB">RUB</option>
+              <option value="CNY">CNY</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
 
-<div id="vatManual" style="display:none;">
-<label>НДС сумма</label>
-<div class="row">
-<input id="vatSum">
-<select id="vatCur">
-<option value="RUB">RUB</option>
-<option value="CNY">CNY</option>
-<option value="USD">USD</option>
-</select>
-</div>
-</div>
+        <div>
+          <label>Упаковка / обрешётка (если есть)</label>
+          <div class="row">
+            <input id="pack" value="0" inputmode="decimal" />
+            <select id="packCur">
+              <option value="RUB">RUB</option>
+              <option value="CNY">CNY</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
 
-<label>Брокер</label>
-<div class="row">
-<input id="broker">
-<select id="brokerCur">
-<option value="RUB">RUB</option>
-<option value="CNY">CNY</option>
-<option value="USD">USD</option>
-</select>
-</div>
+        <div class="full hint">
+          В “в белую” в таможенную стоимость обычно включают расходы <b>до границы</b>. Довоз по РФ — отдельно.
+        </div>
+      </div>
+    </div>
 
-</div>
+    <!-- Таможня -->
+    <div class="card">
+      <h2>Таможенные платежи</h2>
+      <div class="grid">
+        <div>
+          <label>Пошлина, % (если есть)</label>
+          <input id="dutyPct" value="0" inputmode="decimal" />
+        </div>
+        <div>
+          <label>Антидемпинговая пошлина, % (если есть)</label>
+          <input id="adPct" value="0" inputmode="decimal" />
+        </div>
 
-<div class="card result-box">
-<h2>ИТОГО</h2>
-<div class="big" id="grand">0 ₽</div>
-<div id="details"></div>
-</div>
+        <div class="full">
+          <label>НДС</label>
+          <div class="switch">
+            <label><input type="radio" name="vatMode" value="percent" checked /> В процентах</label>
+            <label><input type="radio" name="vatMode" value="manual" /> Фиксированная сумма</label>
+          </div>
 
-</div>
+          <div id="vatPercentBlock" class="grid">
+            <div>
+              <label>НДС, %</label>
+              <input id="vatPct" value="20" inputmode="decimal" />
+            </div>
+            <div class="hint" style="align-self:end">
+              Считается по базе: (тамож.стоимость + пошлина + антидемпинг) × %
+            </div>
+          </div>
+
+          <div id="vatManualBlock" style="display:none;">
+            <label>НДС, сумма</label>
+            <div class="row">
+              <input id="vatManual" value="0" inputmode="decimal" />
+              <select id="vatManualCur">
+                <option value="RUB">RUB</option>
+                <option value="CNY">CNY</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label>Услуги брокера</label>
+          <div class="row">
+            <input id="broker" value="0" inputmode="decimal" />
+            <select id="brokerCur">
+              <option value="RUB">RUB</option>
+              <option value="CNY">CNY</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="full hint">
+          Формулы: Тамож.стоимость = Закупка + (логистика до границы + страховка до границы).<br/>
+          Пошлина = Тамож.стоимость × %. Антидемпинг = Тамож.стоимость × %. НДС: по базе или вручную.
+        </div>
+      </div>
+    </div>
+
+    <!-- Итоги -->
+    <div class="card">
+      <h2>Итоги</h2>
+      <div class="totals">
+        <div class="big">
+          <div class="t">ИТОГО затрат</div>
+          <div class="v" id="grandTotalOut">0 ₽</div>
+          <div class="hint" id="breakdownOut"></div>
+          <div class="btns">
+            <button id="copySummary">Скопировать расчёт</button>
+            <button class="secondary" id="resetAll">Сбросить</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="t">Себестоимость 1 шт</div>
+            <div class="v" id="perUnitOut">0 ₽</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Себестоимость 1 кг</div>
+            <div class="v" id="perKgOut">0 ₽/кг</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Таможенная стоимость</div>
+            <div class="v" id="customsValueOut">0 ₽</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Таможенные платежи (пошлина+антидемпинг+НДС)</div>
+            <div class="v" id="customsPaymentsOut">0 ₽</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 
 <script>
-function n(v){return parseFloat(String(v).replace(',','.'))||0;}
-function rate(cur){
-if(cur==="RUB")return 1;
-if(cur==="CNY")return n(document.getElementById("rateCNY").value);
-if(cur==="USD")return n(document.getElementById("rateUSD").value);
-}
-function toRub(val,cur){return n(val)*rate(cur);}
+(() => {
+  const $ = (id) => document.getElementById(id);
 
-function calc(){
-let price=n(priceEl.value);
-let qty=n(qtyEl.value);
-let buy=toRub(price,priceCur.value)*qty;
-buyOut.value=buy.toFixed(0)+" ₽";
+  const ids = [
+    "rateCNY","rateUSD",
+    "cargoName","unitPrice","unitPriceCur","qty","unitWeight",
+    "logBorder","logBorderCur","insurance","insuranceCur","logRF","logRFCur","pack","packCur",
+    "dutyPct","adPct","vatPct","vatManual","vatManualCur","broker","brokerCur"
+  ];
 
-let borderCost=toRub(borderEl.value,borderCur.value);
-let rfCost=toRub(rfEl.value,rfCur.value);
-let brokerCost=toRub(brokerEl.value,brokerCur.value);
+  function n(v){
+    if (v === null || v === undefined) return 0;
+    const s = String(v).replace(/\s+/g,'').replace(',', '.');
+    const x = parseFloat(s);
+    return isFinite(x) ? x : 0;
+  }
 
-let customsValue=buy+borderCost;
+  function rate(cur){
+    if (cur === "RUB") return 1;
+    if (cur === "CNY") return Math.max(0, n($("rateCNY").value));
+    if (cur === "USD") return Math.max(0, n($("rateUSD").value));
+    return 1;
+  }
 
-let dutyCost=customsValue*(n(dutyEl.value)/100);
-let antiCost=customsValue*(n(antiEl.value)/100);
+  function toRUB(amount, cur){ return n(amount) * rate(cur); }
 
-let vatCost=0;
-if(document.querySelector('input[name="vatMode"]:checked').value==="percent"){
-vatCost=(customsValue+dutyCost+antiCost)*(n(vatPct.value)/100);
-}else{
-vatCost=toRub(vatSum.value,vatCur.value);
-}
+  function fmtRub(x){
+    const v = isFinite(x) ? x : 0;
+    return new Intl.NumberFormat('ru-RU', {maximumFractionDigits:0}).format(Math.round(v)) + " ₽";
+  }
+  function fmtNum(x){
+    const v = isFinite(x) ? x : 0;
+    return new Intl.NumberFormat('ru-RU', {maximumFractionDigits:3}).format(v);
+  }
 
-let total=buy+borderCost+rfCost+brokerCost+dutyCost+antiCost+vatCost;
+  function vatMode(){ return document.querySelector('input[name="vatMode"]:checked')?.value || "percent"; }
 
-grand.innerHTML=total.toFixed(0)+" ₽";
-details.innerHTML=
-"Таможенная стоимость: "+customsValue.toFixed(0)+" ₽<br>"+
-"Пошлина: "+dutyCost.toFixed(0)+" ₽<br>"+
-"Антидемпинг: "+antiCost.toFixed(0)+" ₽<br>"+
-"НДС: "+vatCost.toFixed(0)+" ₽";
-}
+  function calc(){
+    const unitPrice = n($("unitPrice").value);
+    const unitCur = $("unitPriceCur").value;
+    const qty = Math.max(0, Math.round(n($("qty").value)));
+    const unitW = Math.max(0, n($("unitWeight").value));
 
-document.querySelectorAll("input,select").forEach(el=>el.addEventListener("input",calc));
+    const buyRub = toRUB(unitPrice, unitCur) * qty;
+    const weightTotal = unitW * qty;
 
-document.querySelectorAll('input[name="vatMode"]').forEach(el=>{
-el.addEventListener("change",function(){
-if(this.value==="percent"){
-vatPercent.style.display="block";
-vatManual.style.display="none";
-}else{
-vatPercent.style.display="none";
-vatManual.style.display="block";
-}
-});
-});
+    $("buyTotalOut").value = fmtRub(buyRub);
+    $("weightTotalOut").value = fmtNum(weightTotal);
 
-const priceEl=price, qtyEl=qty, priceCur=document.getElementById("priceCur");
-const borderEl=border, borderCur=document.getElementById("borderCur");
-const rfEl=rf, rfCur=document.getElementById("rfCur");
-const brokerEl=broker, brokerCur=document.getElementById("brokerCur");
-const dutyEl=duty, antiEl=anti;
+    const logBorderRub = toRUB($("logBorder").value, $("logBorderCur").value);
+    const insuranceRub = toRUB($("insurance").value, $("insuranceCur").value);
+    const logRFRub = toRUB($("logRF").value, $("logRFCur").value);
+    const packRub = toRUB($("pack").value, $("packCur").value);
 
-calc();
+    const brokerRub = toRUB($("broker").value, $("brokerCur").value);
+
+    const dutyPct = Math.max(0, n($("dutyPct").value));
+    const adPct = Math.max(0, n($("adPct").value));
+
+    const customsValue = buyRub + logBorderRub + insuranceRub;
+
+    const duty = customsValue * (dutyPct/100);
+    const anti = customsValue * (adPct/100);
+
+    let vat = 0;
+    if (vatMode() === "percent") {
+      const vatPct = Math.max(0, n($("vatPct").value));
+      const vatBase = customsValue + duty + anti;
+      vat = vatBase * (vatPct/100);
+    } else {
+      vat = toRUB($("vatManual").value, $("vatManualCur").value);
+    }
+
+    const allLogistics = logBorderRub + insuranceRub + logRFRub + packRub;
+    const customsPayments = duty + anti + vat;
+    const grand = buyRub + allLogistics + customsPayments + brokerRub;
+
+    $("customsValueOut").textContent = fmtRub(customsValue);
+    $("customsPaymentsOut").textContent = fmtRub(customsPayments);
+    $("grandTotalOut").textContent = fmtRub(grand);
+
+    const perUnit = qty > 0 ? grand / qty : 0;
+    const perKg = weightTotal > 0 ? grand / weightTotal : 0;
+
+    $("perUnitOut").textContent = fmtRub(perUnit);
+    $("perKgOut").textContent = (isFinite(perKg) ? fmtRub(perKg).replace(" ₽","") : "0") + " ₽/кг";
+
+    $("breakdownOut").innerHTML =
+      `Закупка: <b>${fmtRub(buyRub)}</b> · ` +
+      `Логистика: <b>${fmtRub(allLogistics)}</b> · ` +
+      `Пошлина: <b>${fmtRub(duty)}</b> · ` +
+      `Антидемпинг: <b>${fmtRub(anti)}</b> · ` +
+      `НДС: <b>${fmtRub(vat)}</b> · ` +
+      `Брокер: <b>${fmtRub(brokerRub)}</b>`;
+  }
+
+  // listeners
+  ids.forEach(id=>{
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+  });
+
+  // VAT toggle
+  document.querySelectorAll('input[name="vatMode"]').forEach(r=>{
+    r.addEventListener('change', ()=>{
+      $("vatPercentBlock").style.display = (vatMode()==="percent") ? "grid" : "none";
+      $("vatManualBlock").style.display = (vatMode()==="manual") ? "block" : "none";
+      calc();
+    });
+  });
+
+  $("resetAll").addEventListener('click', ()=>{
+    $("cargoName").value = "";
+    $("unitPrice").value = "0"; $("unitPriceCur").value = "CNY";
+    $("qty").value = "1"; $("unitWeight").value = "0";
+    $("logBorder").value = "0"; $("logBorderCur").value = "RUB";
+    $("insurance").value = "0"; $("insuranceCur").value = "RUB";
+    $("logRF").value = "0"; $("logRFCur").value = "RUB";
+    $("pack").value = "0"; $("packCur").value = "RUB";
+    $("dutyPct").value = "0"; $("adPct").value = "0";
+    $("vatPct").value = "20"; $("vatManual").value = "0"; $("vatManualCur").value = "RUB";
+    $("broker").value = "0"; $("brokerCur").value = "RUB";
+    document.querySelector('input[name="vatMode"][value="percent"]').checked = true;
+    $("vatPercentBlock").style.display = "grid";
+    $("vatManualBlock").style.display = "none";
+    calc();
+  });
+
+  $("copySummary").addEventListener('click', async function(){
+    calc();
+    const text =
+`РАСЧЁТ (в белую / официальный импорт)
+Груз: ${$("cargoName").value || "-"}
+Кол-во: ${$("qty").value} шт
+Итого закупка: ${$("buyTotalOut").value}
+Итого вес: ${$("weightTotalOut").value} кг
+
+Таможенная стоимость: ${$("customsValueOut").textContent}
+Таможенные платежи: ${$("customsPaymentsOut").textContent}
+
+ИТОГО затрат: ${$("grandTotalOut").textContent}
+Себестоимость 1 шт: ${$("perUnitOut").textContent}
+Себестоимость 1 кг: ${$("perKgOut").textContent}`;
+    try{
+      await navigator.clipboard.writeText(text);
+      this.textContent = "Скопировано ✓";
+      setTimeout(()=>this.textContent="Скопировать расчёт",1200);
+    }catch(e){
+      prompt("Скопируй вручную:", text);
+    }
+  });
+
+  calc();
+})();
 </script>
-
 </body>
 </html>
 

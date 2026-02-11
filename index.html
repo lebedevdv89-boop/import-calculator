@@ -8,13 +8,10 @@
   <style>
     :root{
       --bg:#0b0c10;
-      --panel:#11131a;
-      --card:#141826;
       --bd:rgba(255,255,255,.08);
       --txt:#f3f4f6;
       --muted:rgba(243,244,246,.68);
       --accent:#7c3aed;
-      --accent2:#22c55e;
       --shadow:0 18px 60px rgba(0,0,0,.45);
       --r:16px;
     }
@@ -28,7 +25,7 @@
       color:var(--txt);
     }
     .wrap{max-width:1040px;margin:0 auto;padding:18px 14px 28px}
-    h1{margin:6px 0 10px;font-size:20px;letter-spacing:-.2px;font-weight:800}
+    h1{margin:6px 0 10px;font-size:20px;letter-spacing:-.2px;font-weight:900}
     .sub{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.4}
 
     .card{
@@ -40,7 +37,7 @@
       box-shadow:var(--shadow);
     }
     .section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-    h2{margin:0;font-size:13px;color:rgba(243,244,246,.9);font-weight:800;letter-spacing:.2px}
+    h2{margin:0;font-size:13px;color:rgba(243,244,246,.9);font-weight:900;letter-spacing:.2px}
     .badge{
       font-size:11px;color:rgba(243,244,246,.75);
       padding:6px 10px;border-radius:999px;
@@ -62,7 +59,6 @@
     }
     input:focus,select:focus{border-color:rgba(124,58,237,.55); box-shadow:0 0 0 3px rgba(124,58,237,.18)}
     input[disabled]{opacity:.85;background:rgba(15,18,28,.35)}
-
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
     .row{display:grid;grid-template-columns:1fr 110px;gap:8px}
@@ -73,7 +69,7 @@
     .switch label{display:flex;gap:8px;align-items:center;margin:0;color:rgba(243,244,246,.75);font-size:12px}
     .switch input{width:auto}
 
-    .totals{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;align-items:stretch}
+    .totals{display:grid;grid-template-columns:1.25fr 1fr;gap:10px;align-items:stretch}
     .big{
       border:1px solid rgba(255,255,255,.10);
       border-radius:18px;
@@ -86,14 +82,15 @@
     .big .t{font-size:11px;color:rgba(243,244,246,.72);margin-bottom:8px}
     .big .v{font-size:28px;font-weight:900;letter-spacing:-.4px}
     .pill{
-      display:inline-flex;gap:8px;align-items:center;
-      padding:7px 10px;border-radius:999px;
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+      padding:9px 10px;border-radius:999px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(0,0,0,.18);
-      font-size:11px;color:rgba(243,244,246,.85);
+      font-size:12px;color:rgba(243,244,246,.9);
       margin-top:10px;
-      flex-wrap:wrap;
     }
+    .pill b{font-weight:900}
+    .pill .dim{opacity:.72}
 
     .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .kpi{
@@ -104,6 +101,7 @@
     }
     .kpi .t{font-size:11px;color:rgba(243,244,246,.72)}
     .kpi .v{font-size:15px;font-weight:900;margin-top:6px}
+    .kpi .s{margin-top:6px;color:rgba(243,244,246,.62);font-size:11px;line-height:1.35}
 
     .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
     button{
@@ -114,11 +112,23 @@
       border-radius:12px;
       cursor:pointer;
       font-size:13px;
-      font-weight:800;
+      font-weight:900;
     }
     button.secondary{background:rgba(15,18,28,.55);color:rgba(243,244,246,.92)}
     button:hover{filter:brightness(1.06)}
     button:active{transform:translateY(1px)}
+
+    details{border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:10px 12px;background:rgba(15,18,28,.45)}
+    details summary{cursor:pointer;color:rgba(243,244,246,.9);font-weight:900;font-size:12px;list-style:none}
+    details summary::-webkit-details-marker{display:none}
+    .log{
+      margin-top:10px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+      font-size:11px;
+      color:rgba(243,244,246,.82);
+      white-space:pre-wrap;
+      line-height:1.5;
+    }
 
     @media(max-width:820px){
       .grid,.grid3,.totals{grid-template-columns:1fr}
@@ -131,15 +141,15 @@
   <div class="wrap">
     <h1>Калькулятор импорта</h1>
     <div class="sub">
-      Официальная схема “в белую”: закупка + расходы до границы + пошлины/антидемпинг + НДС + брокер + довоз по РФ.
-      Валюты можно смешивать — итоги считаются в RUB.
+      Официальная схема “в белую”. Валюты: USD / EUR / CNY / RUB. Итоги считаются в RUB.
+      Разделение логистики: “до границы” используется для таможенной стоимости, “до РФ” — для общей себестоимости.
     </div>
 
     <!-- Курсы -->
     <div class="card">
       <div class="section-head">
         <h2>Курсы валют</h2>
-        <div class="badge">Итоги в RUB</div>
+        <div class="badge">Конвертация в RUB</div>
       </div>
       <div class="grid3">
         <div>
@@ -151,18 +161,18 @@
           <input id="rateUSD" value="95.00" inputmode="decimal" />
         </div>
         <div>
-          <label>Валюта расчёта</label>
-          <input value="RUB" disabled />
+          <label>EUR → RUB</label>
+          <input id="rateEUR" value="103.00" inputmode="decimal" />
         </div>
       </div>
-      <div class="hint">Курс меняй вручную на актуальный — расчёт пересчитается автоматически.</div>
+      <div class="hint">Изменил курс → всё пересчиталось. RUB всегда = 1.</div>
     </div>
 
     <!-- Товар + Логистика -->
     <div class="card">
       <div class="section-head">
         <h2>Товар и логистика</h2>
-        <div class="badge">Смешанные валюты</div>
+        <div class="badge">Авто 1/3 до границы</div>
       </div>
 
       <div class="grid">
@@ -178,6 +188,7 @@
             <select id="unitPriceCur">
               <option value="CNY">CNY</option>
               <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
               <option value="RUB">RUB</option>
             </select>
           </div>
@@ -204,40 +215,49 @@
         </div>
 
         <div>
-          <label>Логистика до границы / до места ввоза</label>
+          <label>Логистика до РФ (полная стоимость доставки до РФ)</label>
           <div class="row">
-            <input id="logBorder" value="0" inputmode="decimal" />
-            <select id="logBorderCur">
+            <input id="logToRF" value="0" inputmode="decimal" />
+            <select id="logToRFCur">
               <option value="RUB">RUB</option>
               <option value="CNY">CNY</option>
               <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
             </select>
           </div>
-          <div class="hint">Влияет на таможенную стоимость.</div>
+          <div class="hint">Идёт в итоговую себестоимость.</div>
         </div>
 
         <div>
-          <label>Страховка до границы (если есть)</label>
+          <label>Логистика до границы (для таможенной стоимости)</label>
+          <div class="row">
+            <input id="logToBorder" value="0" inputmode="decimal" />
+            <select id="logToBorderCur">
+              <option value="RUB">RUB</option>
+              <option value="CNY">CNY</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+
+          <div class="switch">
+            <label><input type="checkbox" id="autoBorder" checked /> Авто: до границы = 1/3 от “до РФ”</label>
+          </div>
+          <div class="hint">Если “Авто” включён — поле недоступно и считается автоматически.</div>
+        </div>
+
+        <div>
+          <label>Страховка до границы (отдельной строкой)</label>
           <div class="row">
             <input id="insurance" value="0" inputmode="decimal" />
             <select id="insuranceCur">
               <option value="RUB">RUB</option>
               <option value="CNY">CNY</option>
               <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
             </select>
           </div>
-        </div>
-
-        <div>
-          <label>Довоз по РФ (после таможни)</label>
-          <div class="row">
-            <input id="logRF" value="0" inputmode="decimal" />
-            <select id="logRFCur">
-              <option value="RUB">RUB</option>
-              <option value="CNY">CNY</option>
-              <option value="USD">USD</option>
-            </select>
-          </div>
+          <div class="hint">Участвует и в таможенной стоимости, и в итоговой себестоимости.</div>
         </div>
 
         <div>
@@ -248,21 +268,23 @@
               <option value="RUB">RUB</option>
               <option value="CNY">CNY</option>
               <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
             </select>
           </div>
         </div>
 
         <div class="full hint">
-          В “в белую” в таможенную стоимость обычно включают расходы <b>до границы</b>. Довоз по РФ — отдельно.
+          Таможенная стоимость (TS) = Закупка + Логистика до границы + Страховка до границы.
+          В итог: Закупка + Логистика до РФ + Страховка + Упаковка + Брокер + Тамож.платежи.
         </div>
       </div>
     </div>
 
-    <!-- Таможня + Итоги -->
+    <!-- Таможня + Итог -->
     <div class="card">
       <div class="section-head">
         <h2>Таможня и итог</h2>
-        <div class="badge">НДС: % или сумма</div>
+        <div class="badge">Логи для проверки</div>
       </div>
 
       <div class="grid">
@@ -289,7 +311,7 @@
               <input id="vatPct" value="20" inputmode="decimal" />
             </div>
             <div class="hint" style="align-self:end">
-              База НДС: (тамож.стоимость + пошлина + антидемпинг) × %
+              База НДС = TS + Пошлина + Антидемпинг
             </div>
           </div>
 
@@ -301,6 +323,7 @@
                 <option value="RUB">RUB</option>
                 <option value="CNY">CNY</option>
                 <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
               </select>
             </div>
           </div>
@@ -314,6 +337,7 @@
               <option value="RUB">RUB</option>
               <option value="CNY">CNY</option>
               <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
             </select>
           </div>
         </div>
@@ -325,9 +349,8 @@
               <div class="v" id="grandTotalOut">0 ₽</div>
 
               <div class="pill">
-                Себестоимость:
-                <b id="perUnitOut">0 ₽</b><span style="opacity:.7">/шт</span> ·
-                <b id="perKgOut">0 ₽/кг</b>
+                <span class="dim">Себестоимость за кг:</span> <b id="perKgOut">0 ₽/кг</b>
+                <span class="dim">· за шт:</span> <b id="perUnitOut">0 ₽</b><span class="dim">/шт</span>
               </div>
 
               <div class="hint" id="breakdownOut" style="margin-top:10px"></div>
@@ -340,20 +363,22 @@
 
             <div class="kpis">
               <div class="kpi">
-                <div class="t">Таможенная стоимость</div>
+                <div class="t">Таможенная стоимость (TS)</div>
                 <div class="v" id="customsValueOut">0 ₽</div>
+                <div class="s">TS = Закупка + Логистика до границы + Страховка</div>
               </div>
               <div class="kpi">
                 <div class="t">Таможенные платежи</div>
                 <div class="v" id="customsPaymentsOut">0 ₽</div>
-                <div class="hint">пошлина + антидемпинг + НДС</div>
+                <div class="s">Пошлина + Антидемпинг + НДС</div>
               </div>
             </div>
           </div>
 
-          <div class="hint" style="margin-top:10px">
-            Формулы: Тамож.стоимость = Закупка + (логистика до границы + страховка до границы). Пошлина/антидемпинг — от тамож.стоимости.
-          </div>
+          <details style="margin-top:12px" open>
+            <summary>Логи расчёта (для проверки)</summary>
+            <div class="log" id="calcLog">—</div>
+          </details>
         </div>
       </div>
     </div>
@@ -364,9 +389,10 @@
   const $ = (id) => document.getElementById(id);
 
   const ids = [
-    "rateCNY","rateUSD",
+    "rateCNY","rateUSD","rateEUR",
     "cargoName","unitPrice","unitPriceCur","qty","unitWeight",
-    "logBorder","logBorderCur","insurance","insuranceCur","logRF","logRFCur","pack","packCur",
+    "logToRF","logToRFCur","logToBorder","logToBorderCur","autoBorder",
+    "insurance","insuranceCur","pack","packCur",
     "dutyPct","adPct",
     "vatPct","vatManual","vatManualCur",
     "broker","brokerCur"
@@ -383,6 +409,7 @@
     if (cur === "RUB") return 1;
     if (cur === "CNY") return Math.max(0, n($("rateCNY").value));
     if (cur === "USD") return Math.max(0, n($("rateUSD").value));
+    if (cur === "EUR") return Math.max(0, n($("rateEUR").value));
     return 1;
   }
 
@@ -392,6 +419,10 @@
     const v = isFinite(x) ? x : 0;
     return new Intl.NumberFormat('ru-RU', {maximumFractionDigits:0}).format(Math.round(v)) + " ₽";
   }
+  function fmtRub2(x){
+    const v = isFinite(x) ? x : 0;
+    return new Intl.NumberFormat('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2}).format(v) + " ₽";
+  }
   function fmtNum(x){
     const v = isFinite(x) ? x : 0;
     return new Intl.NumberFormat('ru-RU', {maximumFractionDigits:3}).format(v);
@@ -399,9 +430,27 @@
 
   function vatMode(){ return document.querySelector('input[name="vatMode"]:checked')?.value || "percent"; }
 
+  function syncBorderAuto(){
+    const auto = $("autoBorder").checked;
+    $("logToBorder").disabled = auto;
+    $("logToBorderCur").disabled = auto;
+
+    if (!auto) return;
+
+    // Авто: до границы = 1/3 от "до РФ", валюта такая же, как у "до РФ"
+    const rfVal = n($("logToRF").value);
+    const rfCur = $("logToRFCur").value;
+
+    $("logToBorderCur").value = rfCur;
+    $("logToBorder").value = (rfVal / 3).toFixed(2);
+  }
+
   function calc(){
+    syncBorderAuto();
+
     const unitPrice = n($("unitPrice").value);
     const unitCur = $("unitPriceCur").value;
+
     const qty = Math.max(0, Math.round(n($("qty").value)));
     const unitW = Math.max(0, n($("unitWeight").value));
 
@@ -411,53 +460,108 @@
     $("buyTotalOut").value = fmtRub(buyRub);
     $("weightTotalOut").value = fmtNum(weightTotal);
 
-    const logBorderRub = toRUB($("logBorder").value, $("logBorderCur").value);
-    const insuranceRub = toRUB($("insurance").value, $("insuranceCur").value);
-    const logRFRub = toRUB($("logRF").value, $("logRFCur").value);
-    const packRub = toRUB($("pack").value, $("packCur").value);
+    const logToRFRub = toRUB($("logToRF").value, $("logToRFCur").value);
+    const logToBorderRub = toRUB($("logToBorder").value, $("logToBorderCur").value);
 
+    const insuranceRub = toRUB($("insurance").value, $("insuranceCur").value);
+    const packRub = toRUB($("pack").value, $("packCur").value);
     const brokerRub = toRUB($("broker").value, $("brokerCur").value);
 
     const dutyPct = Math.max(0, n($("dutyPct").value));
     const adPct = Math.max(0, n($("adPct").value));
 
-    const customsValue = buyRub + logBorderRub + insuranceRub;
+    // Таможенная стоимость (TS)
+    const TS = buyRub + logToBorderRub + insuranceRub;
 
-    const duty = customsValue * (dutyPct/100);
-    const anti = customsValue * (adPct/100);
+    // Пошлины
+    const DUTY = TS * (dutyPct/100);
+    const AD = TS * (adPct/100);
 
-    let vat = 0;
+    // НДС
+    const VAT_BASE = TS + DUTY + AD;
+
+    let VAT = 0;
     if (vatMode() === "percent") {
       const vatPct = Math.max(0, n($("vatPct").value));
-      const vatBase = customsValue + duty + anti;
-      vat = vatBase * (vatPct/100);
+      VAT = VAT_BASE * (vatPct/100);
     } else {
-      vat = toRUB($("vatManual").value, $("vatManualCur").value);
+      VAT = toRUB($("vatManual").value, $("vatManualCur").value);
     }
 
-    const allLogistics = logBorderRub + insuranceRub + logRFRub + packRub;
-    const customsPayments = duty + anti + vat;
-    const grand = buyRub + allLogistics + customsPayments + brokerRub;
+    const CUSTOMS_PAYMENTS = DUTY + AD + VAT;
 
-    $("customsValueOut").textContent = fmtRub(customsValue);
-    $("customsPaymentsOut").textContent = fmtRub(customsPayments);
-    $("grandTotalOut").textContent = fmtRub(grand);
+    // Итог (страховка отдельной строкой — добавляем и в итог)
+    // GRAND = BUY + LOG_RF + INS + PACK + BROKER + CUSTOMS_PAYMENTS
+    const GRAND = buyRub + logToRFRub + insuranceRub + packRub + brokerRub + CUSTOMS_PAYMENTS;
 
-    const perUnit = qty > 0 ? grand / qty : 0;
-    const perKg = weightTotal > 0 ? grand / weightTotal : 0;
+    $("customsValueOut").textContent = fmtRub(TS);
+    $("customsPaymentsOut").textContent = fmtRub(CUSTOMS_PAYMENTS);
+    $("grandTotalOut").textContent = fmtRub(GRAND);
+
+    const perUnit = qty > 0 ? GRAND / qty : 0;
+    const perKg = weightTotal > 0 ? GRAND / weightTotal : 0;
 
     $("perUnitOut").textContent = fmtRub(perUnit);
     $("perKgOut").textContent = (isFinite(perKg) ? fmtRub(perKg).replace(" ₽","") : "0") + " ₽/кг";
 
     $("breakdownOut").innerHTML =
       `Закупка: <b>${fmtRub(buyRub)}</b> · ` +
-      `Логистика: <b>${fmtRub(allLogistics)}</b> · ` +
-      `Пошлина: <b>${fmtRub(duty)}</b> · ` +
-      `Антидемпинг: <b>${fmtRub(anti)}</b> · ` +
-      `НДС: <b>${fmtRub(vat)}</b> · ` +
+      `Логистика до РФ: <b>${fmtRub(logToRFRub)}</b> · ` +
+      `Страховка: <b>${fmtRub(insuranceRub)}</b> · ` +
+      `Упаковка: <b>${fmtRub(packRub)}</b> · ` +
+      `Пошлина: <b>${fmtRub(DUTY)}</b> · ` +
+      `Антидемпинг: <b>${fmtRub(AD)}</b> · ` +
+      `НДС: <b>${fmtRub(VAT)}</b> · ` +
       `Брокер: <b>${fmtRub(brokerRub)}</b>`;
+
+    // Логи для проверки
+    const logLines = [];
+    logLines.push("=== Курсы ===");
+    logLines.push(`CNY→RUB = ${rate("CNY")}`);
+    logLines.push(`USD→RUB = ${rate("USD")}`);
+    logLines.push(`EUR→RUB = ${rate("EUR")}`);
+    logLines.push("");
+    logLines.push("=== Товар ===");
+    logLines.push(`Цена 1 шт: ${unitPrice} ${unitCur} => ${toRUB(unitPrice, unitCur).toFixed(2)} RUB`);
+    logLines.push(`Количество: ${qty}`);
+    logLines.push(`BUY (закупка) = ${buyRub.toFixed(2)} RUB`);
+    logLines.push(`Вес итого = ${weightTotal.toFixed(3)} кг`);
+    logLines.push("");
+    logLines.push("=== Логистика ===");
+    logLines.push(`LOG_RF (до РФ) = ${n($("logToRF").value)} ${$("logToRFCur").value} => ${logToRFRub.toFixed(2)} RUB`);
+    logLines.push(`LOG_BORDER (до границы) = ${n($("logToBorder").value)} ${$("logToBorderCur").value} => ${logToBorderRub.toFixed(2)} RUB`);
+    logLines.push(`INS_BORDER (страховка) = ${n($("insurance").value)} ${$("insuranceCur").value} => ${insuranceRub.toFixed(2)} RUB`);
+    logLines.push(`PACK (упаковка) = ${n($("pack").value)} ${$("packCur").value} => ${packRub.toFixed(2)} RUB`);
+    logLines.push(`BROKER = ${n($("broker").value)} ${$("brokerCur").value} => ${brokerRub.toFixed(2)} RUB`);
+    logLines.push("");
+    logLines.push("=== Таможня (в белую) ===");
+    logLines.push("TS = BUY + LOG_BORDER + INS_BORDER");
+    logLines.push(`TS = ${buyRub.toFixed(2)} + ${logToBorderRub.toFixed(2)} + ${insuranceRub.toFixed(2)} = ${TS.toFixed(2)} RUB`);
+    logLines.push(`DUTY% = ${dutyPct}%  => DUTY = TS * % = ${TS.toFixed(2)} * ${(dutyPct/100).toFixed(4)} = ${DUTY.toFixed(2)} RUB`);
+    logLines.push(`AD%   = ${adPct}%    => AD   = TS * % = ${TS.toFixed(2)} * ${(adPct/100).toFixed(4)} = ${AD.toFixed(2)} RUB`);
+    logLines.push(`VAT_BASE = TS + DUTY + AD = ${TS.toFixed(2)} + ${DUTY.toFixed(2)} + ${AD.toFixed(2)} = ${VAT_BASE.toFixed(2)} RUB`);
+
+    if (vatMode() === "percent") {
+      const vatPct = Math.max(0, n($("vatPct").value));
+      logLines.push(`VAT mode = percent (${vatPct}%)`);
+      logLines.push(`VAT = VAT_BASE * % = ${VAT_BASE.toFixed(2)} * ${(vatPct/100).toFixed(4)} = ${VAT.toFixed(2)} RUB`);
+    } else {
+      logLines.push("VAT mode = manual amount");
+      logLines.push(`VAT = ${n($("vatManual").value)} ${$("vatManualCur").value} => ${VAT.toFixed(2)} RUB`);
+    }
+
+    logLines.push(`CUSTOMS_PAYMENTS = DUTY + AD + VAT = ${DUTY.toFixed(2)} + ${AD.toFixed(2)} + ${VAT.toFixed(2)} = ${CUSTOMS_PAYMENTS.toFixed(2)} RUB`);
+    logLines.push("");
+    logLines.push("=== Итог ===");
+    logLines.push("GRAND = BUY + LOG_RF + INS + PACK + BROKER + CUSTOMS_PAYMENTS");
+    logLines.push(`GRAND = ${buyRub.toFixed(2)} + ${logToRFRub.toFixed(2)} + ${insuranceRub.toFixed(2)} + ${packRub.toFixed(2)} + ${brokerRub.toFixed(2)} + ${CUSTOMS_PAYMENTS.toFixed(2)} = ${GRAND.toFixed(2)} RUB`);
+    logLines.push(`COST/kg = GRAND / weight_total = ${GRAND.toFixed(2)} / ${weightTotal.toFixed(3)} = ${(weightTotal>0 ? (GRAND/weightTotal).toFixed(2) : 0).toFixed(2)} RUB/kg`);
+    logLines.push(`COST/unit = GRAND / qty = ${GRAND.toFixed(2)} / ${qty} = ${(qty>0 ? (GRAND/qty).toFixed(2) : 0).toFixed(2)} RUB/unit`);
+
+    $("calcLog").textContent = logLines.join("\n");
   }
 
+  // listeners
   ids.forEach(id=>{
     const el = $(id);
     if (!el) return;
@@ -465,6 +569,7 @@
     el.addEventListener('change', calc);
   });
 
+  // VAT toggle
   document.querySelectorAll('input[name="vatMode"]').forEach(r=>{
     r.addEventListener('change', ()=>{
       $("vatPercentBlock").style.display = (vatMode()==="percent") ? "grid" : "none";
@@ -473,20 +578,29 @@
     });
   });
 
+  // auto border toggle
+  $("autoBorder").addEventListener('change', ()=>{ calc(); });
+
   $("resetAll").addEventListener('click', ()=>{
     $("cargoName").value = "";
     $("unitPrice").value = "0"; $("unitPriceCur").value = "CNY";
     $("qty").value = "1"; $("unitWeight").value = "0";
-    $("logBorder").value = "0"; $("logBorderCur").value = "RUB";
+
+    $("logToRF").value = "0"; $("logToRFCur").value = "RUB";
+    $("logToBorder").value = "0"; $("logToBorderCur").value = "RUB";
+    $("autoBorder").checked = true;
+
     $("insurance").value = "0"; $("insuranceCur").value = "RUB";
-    $("logRF").value = "0"; $("logRFCur").value = "RUB";
     $("pack").value = "0"; $("packCur").value = "RUB";
+
     $("dutyPct").value = "0"; $("adPct").value = "0";
     $("vatPct").value = "20"; $("vatManual").value = "0"; $("vatManualCur").value = "RUB";
-    $("broker").value = "0"; $("brokerCur").value = "RUB";
     document.querySelector('input[name="vatMode"][value="percent"]').checked = true;
     $("vatPercentBlock").style.display = "grid";
     $("vatManualBlock").style.display = "none";
+
+    $("broker").value = "0"; $("brokerCur").value = "RUB";
+
     calc();
   });
 
@@ -499,12 +613,12 @@
 Итого закупка: ${$("buyTotalOut").value}
 Итого вес: ${$("weightTotalOut").value} кг
 
-Таможенная стоимость: ${$("customsValueOut").textContent}
+Таможенная стоимость (TS): ${$("customsValueOut").textContent}
 Таможенные платежи: ${$("customsPaymentsOut").textContent}
 
 ИТОГО затрат: ${$("grandTotalOut").textContent}
-Себестоимость 1 шт: ${$("perUnitOut").textContent}
-Себестоимость 1 кг: ${$("perKgOut").textContent}`;
+Себестоимость за кг: ${$("perKgOut").textContent}
+Себестоимость за шт: ${$("perUnitOut").textContent}`;
     try{
       await navigator.clipboard.writeText(text);
       this.textContent = "Скопировано ✓";
@@ -514,6 +628,7 @@
     }
   });
 
+  // initial
   calc();
 })();
 </script>

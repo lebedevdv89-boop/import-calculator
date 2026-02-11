@@ -1,0 +1,90 @@
+<div id="import-calc" style="max-width:980px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;">
+<style>
+#import-calc *{box-sizing:border-box}
+#import-calc .card{border:1px solid #e6e6e6;border-radius:12px;padding:16px;margin:12px 0;background:#fff}
+#import-calc h2{font-size:18px;margin:0 0 12px}
+#import-calc .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#import-calc label{display:block;font-size:12px;color:#444;margin:0 0 6px}
+#import-calc input, #import-calc select{
+  width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:10px;font-size:14px
+}
+#import-calc .row{display:grid;grid-template-columns:1fr 120px;gap:8px}
+#import-calc .big{border:2px solid #111;border-radius:14px;padding:16px;background:#fafafa}
+#import-calc .value{font-size:26px;font-weight:700}
+#import-calc .switch{display:flex;gap:10px;margin-bottom:10px}
+#import-calc button{border:1px solid #111;background:#111;color:#fff;padding:10px;border-radius:10px;cursor:pointer}
+</style>
+
+<div class="card">
+<h2>НДС</h2>
+
+<div class="switch">
+<label><input type="radio" name="vatMode" value="percent" checked> В процентах</label>
+<label><input type="radio" name="vatMode" value="manual"> Фиксированная сумма</label>
+</div>
+
+<div id="vatPercentBlock">
+<label>НДС, %</label>
+<input id="vatPct" value="20" inputmode="decimal" />
+</div>
+
+<div id="vatManualBlock" style="display:none;">
+<label>НДС, сумма</label>
+<div class="row">
+<input id="vatManual" value="0" inputmode="decimal" />
+<select id="vatManualCur">
+<option value="RUB">RUB</option>
+<option value="CNY">CNY</option>
+<option value="USD">USD</option>
+</select>
+</div>
+</div>
+
+</div>
+
+<script>
+(function(){
+  const vatModeRadios = document.querySelectorAll('input[name="vatMode"]');
+  const vatPercentBlock = document.getElementById("vatPercentBlock");
+  const vatManualBlock = document.getElementById("vatManualBlock");
+  const vatPct = document.getElementById("vatPct");
+  const vatManual = document.getElementById("vatManual");
+  const vatManualCur = document.getElementById("vatManualCur");
+
+  function n(v){ return parseFloat(String(v).replace(',','.'))||0; }
+
+  function rate(cur){
+    if(cur==="RUB") return 1;
+    if(cur==="CNY") return parseFloat(document.getElementById("rateCNY")?.value)||0;
+    if(cur==="USD") return parseFloat(document.getElementById("rateUSD")?.value)||0;
+    return 1;
+  }
+
+  function calcVAT(customsValue, duty, anti){
+    let vat = 0;
+    const mode = document.querySelector('input[name="vatMode"]:checked').value;
+
+    if(mode==="percent"){
+      const vatBase = customsValue + duty + anti;
+      vat = vatBase * (n(vatPct.value)/100);
+    } else {
+      vat = n(vatManual.value) * rate(vatManualCur.value);
+    }
+    return vat;
+  }
+
+  vatModeRadios.forEach(r=>{
+    r.addEventListener("change", function(){
+      if(this.value==="percent"){
+        vatPercentBlock.style.display="block";
+        vatManualBlock.style.display="none";
+      } else {
+        vatPercentBlock.style.display="none";
+        vatManualBlock.style.display="block";
+      }
+    });
+  });
+
+})();
+</script>
+</div>
